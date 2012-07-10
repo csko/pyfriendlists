@@ -3,7 +3,7 @@ Facebook Friendlists Manager written in Python
 
 A library and command line toolkit for managing your Facebook friend lists. The friend lists are managed as sets so you can apply the well known set operations(union, intersection, difference, etc.) on them.
 
-The library uses the [Facebook Graph API](https://developers.facebook.com/docs/reference/api/) to access and manage your [FriendLists](https://developers.facebook.com/docs/reference/api/FriendList/). Friends are added and removed using the [Batch Requests](https://developers.facebook.com/docs/reference/api/batch/).
+The library uses the [Facebook Graph API](https://developers.facebook.com/docs/reference/api/) to access and manage your [FriendLists](https://developers.facebook.com/docs/reference/api/FriendList/). Friends are added and removed using [Batch Requests](https://developers.facebook.com/docs/reference/api/batch/).
 
 Requirements
 ------------

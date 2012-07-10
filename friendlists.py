@@ -47,10 +47,10 @@ class FriendList(set):
             fblist = g.me.friendlists.post(name=self.name)
             self.id = fblist['id']
         except Exception, e:
-            raise e # TODO
+            raise e # TODO: list already exists?
 
         # Add members
-        self.updateusers(self.members)
+        self.updateusers(self)
 
     def updateusers(self, toadd=None, todel=None):
         if toadd is None:
@@ -66,23 +66,33 @@ class FriendList(set):
         REQS_PER_POST = 50
         for i in range((len(requests) // REQS_PER_POST)+1):
             try:
-                print requests[i*REQS_PER_POST:(i+1)*REQS_PER_POST]
+#                print requests[i*REQS_PER_POST:(i+1)*REQS_PER_POST]
                 result = self.g.post(batch=dumps(requests[i*REQS_PER_POST:(i+1)*REQS_PER_POST]))
-                print result
+                # TODO: error handling.
+#                print result
             except Exception, e:
                 raise e # TODO
 
 
 if __name__ == "__main__":
-    g = Graph("...") # Replace with OAuth token.
-#    print "Friends"
-#    print g.me.friends() # Friends
-#    fl = FriendList(g, name='New test list', members=set(['1', '2', '3'])) # Replace these with actual friend IDs.
-#    fl.save()
+    g = Graph("") # Replace with OAuth access token.
 
-    # Get all of the friendlists with their members.
+    # Example 1, dump every friendlist into a textfile.
     lists = g.me.friendlists()['data']
-    lids = [fl['id'] for fl in lists]
-    members = g.ids(lids).members()
-#    print members
+    list_map = dict(zip((fl['id'] for fl in lists), (fl for fl in lists)))
+    listdata = g.ids(list_map.keys()).members()
+    with open("my_friendlists.txt", "w") as outfile:
+        # UTF-8
+        import codecs
+        outfile = codecs.getwriter('utf8')(outfile)
+
+        # Write each friendlist on a new line.
+        for lid, result in listdata.iteritems():
+            print >>outfile, "%s (%d):" % (list_map[lid]['name'], len(result['data'])), ', '.join([x['name'] for x in result['data']])
+
+
+    # Example 2, create a list of all of my friends.
+    friends = set([x['id'] for x in g.me.friends()['data']]) # All of my friends IDs.
+    fl = FriendList(g, name='All of my Friends', members=friends)
+    fl.save()
 
