@@ -92,7 +92,12 @@ if __name__ == "__main__":
 
 
     # Example 2, create a list of all of my friends.
-    friends = set([x['id'] for x in g.me.friends()['data']]) # All of my friends IDs.
-    fl = FriendList(g, name='All of my Friends', members=friends)
+    friends = g.me.friends.fields('gender')()['data'] # All of my friends IDs. We will use gender in the next example.
+    fl = FriendList(g, name='All of my Friends', members=set([x['id'] for x in friends]))
     fl.save()
+
+
+    # Example 3, Create two groups of genders, and one for unknown genders.
+    FriendList(g, name='Male friends', members=set([x['id'] for x in friends if x['gender'] == 'male'])).save()
+    FriendList(g, name='Female friends', members=set([x['id'] for x in friends if x['gender'] == 'female'])).save()
 
